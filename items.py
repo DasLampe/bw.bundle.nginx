@@ -51,6 +51,7 @@ if 'nginx' in node.metadata:
                     'needs': ["pkg_apt:openssl"],
                     'cascade_skip': False,
                     'needed_by': [
+                        "pkg_apt:nginx",
                         "svc_systemd:nginx"
                     ],
                 }
