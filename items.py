@@ -36,6 +36,15 @@ symlinks = {}
 files = {}
 
 if 'nginx' in node.metadata:
+    files['/etc/nginx/nginx.conf'] = {
+        'source': 'etc/nginx/nginx.conf',
+        'content_type': 'mako',
+        'context': {
+            'nginx': node.metadata['nginx'],
+        },
+        'mode': '0644',
+    }
+
     for vhost_name in node.metadata['nginx'].get('sites', {}):
         vhost = node.metadata['nginx']['sites'][vhost_name]
 
