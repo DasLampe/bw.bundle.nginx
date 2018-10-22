@@ -81,38 +81,38 @@ if 'nginx' in node.metadata:
                 # TODO: Implement LetsEncrypt
                 continue
 
-    # Write vHost file
-    files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
-        'source': 'etc/nginx/sites-available/template.conf',
-        'content_type': 'mako',
-        'mode': '0640',
-        'owner': 'root',
-        'group': 'root',
-        'context': {'vhost_name': vhost_name, 'vhost': vhost},
-        'triggers': [
-            "svc_systemd:nginx:restart"
-        ],
-    }
-
-    # Enable vHost
-    if vhost.get('enabled', False):
-        symlinks['/etc/nginx/sites-enabled/{}.conf'.format(vhost_name)] = {
-            'group': 'root',
+        # Write vHost file
+        files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
+            'source': 'etc/nginx/sites-available/template.conf',
+            'content_type': 'mako',
+            'mode': '0640',
             'owner': 'root',
-            'target': '../sites-available/{}.conf'.format(vhost_name),
+            'group': 'root',
+            'context': {'vhost_name': vhost_name, 'vhost': vhost},
             'triggers': [
-                'svc_systemd:nginx:restart',
-            ],
-        }
-    else:
-        files['/etc/nginx/sites-enabled/{}.conf'.format(vhost_name)] = {
-            'delete': True,
-            'triggers': [
-                'svc_systemd:nginx:restart',
+                "svc_systemd:nginx:restart"
             ],
         }
 
-    # Create vHost dir
-    directories["/var/www/{}/public_html".format(vhost_name)] = {
-        "mode": "755",
-    }
+        # Enable vHost
+        if vhost.get('enabled', False):
+            symlinks['/etc/nginx/sites-enabled/{}.conf'.format(vhost_name)] = {
+                'group': 'root',
+                'owner': 'root',
+                'target': '../sites-available/{}.conf'.format(vhost_name),
+                'triggers': [
+                    'svc_systemd:nginx:restart',
+                ],
+            }
+        else:
+            files['/etc/nginx/sites-enabled/{}.conf'.format(vhost_name)] = {
+                'delete': True,
+                'triggers': [
+                    'svc_systemd:nginx:restart',
+                ],
+            }
+
+        # Create vHost dir
+        directories["/var/www/{}/public_html".format(vhost_name)] = {
+            "mode": "755",
+        }
