@@ -115,4 +115,5 @@ if 'nginx' in node.metadata:
         # Create vHost dir
         directories["/var/www/{}/public_html".format(vhost_name)] = {
             "mode": "755",
+            "unless": "test -d /var/www/{}/public_html".format(vhost_name),
         }
