@@ -15,18 +15,18 @@ __Don't use this for production! It's still work in progress!__
             'ssl_snakeoil': True,
             'php': True,
             'upstream': {
-              'backend': {
+              'backend': [
                 'server 127.0.0.1:8080',
-              }
-            }
+              ],
+            },
             'location': {
-              '/': {
+              '/': [
                 'root /var/www/html;'
                 'try_files $uri $uri/ index.php$is_args$args;',
-              },
-              '/backend': {
+              ],
+              '/backend': [
                 'proxy_pass http://backend;',
-              },
+              ],
             },
         },
     },
