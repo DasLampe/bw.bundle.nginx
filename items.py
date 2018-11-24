@@ -14,13 +14,19 @@ pkg = {
 # TODO: systemv compatible
 svc_systemd = {
     "nginx": {
-    }
+        'needs': [
+            'user:nginx',
+        ],
+    },
 }
 
 directories = {}
 actions = {}
 symlinks = {}
 files = {}
+users = {
+    'nginx': {},
+}
 
 if 'nginx' in node.metadata:
     files['/etc/nginx/nginx.conf'] = {
