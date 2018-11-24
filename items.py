@@ -66,17 +66,30 @@ if 'nginx' in node.metadata:
                 continue
 
         # Write vHost file
-        files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
-            'source': 'etc/nginx/sites-available/template.conf',
-            'content_type': 'mako',
-            'mode': '0640',
-            'owner': 'root',
-            'group': 'root',
-            'context': {'vhost_name': vhost_name, 'vhost': vhost},
-            'triggers': [
-                "svc_systemd:nginx:restart"
-            ],
-        }
+        if vhost.get('ssl', False):
+            files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
+                'source': 'etc/nginx/sites-available/template_ssl.conf',
+                'content_type': 'mako',
+                'mode': '0644',
+                'owner': 'root',
+                'group': 'root',
+                'context': {'vhost_name': vhost_name, 'vhost': vhost},
+                'triggers': [
+                    "svc_systemd:nginx:restart"
+                ],
+            }
+        else:
+            files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
+                'source': 'etc/nginx/sites-available/template.conf',
+                'content_type': 'mako',
+                'mode': '0644',
+                'owner': 'root',
+                'group': 'root',
+                'context': {'vhost_name': vhost_name, 'vhost': vhost},
+                'triggers': [
+                    "svc_systemd:nginx:restart"
+                ],
+            }
 
         # Enable vHost
         if vhost.get('enabled', False):
