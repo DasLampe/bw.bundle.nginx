@@ -38,9 +38,7 @@ if 'nginx' in node.metadata:
         'mode': '0644',
     }
 
-    for vhost_name in node.metadata['nginx'].get('sites', {}):
-        vhost = node.metadata['nginx']['sites'].get(vhost_name, {})
-
+    for vhost_name,vhost in node.metadata['nginx'].get('sites', {}).items():
         # Setup SSL
         if vhost.get('ssl', False):
             directories['/etc/nginx/ssl'] = {
@@ -69,7 +67,7 @@ if 'nginx' in node.metadata:
                 }
             else:
                 # TODO: Implement LetsEncrypt
-                continue
+                pass
 
         # Write vHost file
         if vhost.get('ssl', False):
