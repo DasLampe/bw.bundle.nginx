@@ -16,8 +16,13 @@ svc_systemd = {
     "nginx": {
         'needs': [
             'user:nginx',
+            'file:/etc/nginx/nginx.conf',
         ],
-    },
+    }
+}
+
+users = {
+    'nginx': {}
 }
 
 directories = {}
