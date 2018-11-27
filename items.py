@@ -15,6 +15,7 @@ pkg = {
 svc_systemd = {
     "nginx": {
         'needs': [
+            'pkg:nginx',
             'user:nginx',
             'file:/etc/nginx/nginx.conf',
         ],
