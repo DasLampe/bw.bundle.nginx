@@ -5,7 +5,15 @@ from os.path import dirname
 global node
 
 pkg = {
+    "epel-release": {
+        "debian": False,
+    },
     "nginx": {
+        "redhat": {
+            "needs": [
+                "pkg:epel-release",
+            ],
+        }
     },
     "openssl": {
     },
