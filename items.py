@@ -4,16 +4,69 @@ from os.path import dirname
 # noinspection PyGlobalUndefined
 global node
 
-pkg = {
-    "epel-release": {
-        "debian": False,
-    },
-    "nginx": {
-        "redhat": {
-            "needs": [
-                "pkg:epel-release",
-            ],
+directories = {}
+actions = {}
+symlinks = {}
+files = {}
+
+users = {
+    'nginx': {},
+}
+
+if node.os in node.OS_FAMILY_REDHAT:
+    files["/etc/yum.repos.d/nginx.repo"] = {
+        'source': 'etc/yum.repos.d/nginx.repo',
+        'content_type': 'mako',
+        'context': {
+            'node_os': node.os,
+            'node_os_version': node.os_version[0]
+        },
+    }
+
+    actions["import_nginx_key"] = {
+        'command': 'rpm --import https://nginx.org/keys/nginx_signing.key',
+        'unless': 'rpm -qa gpg-pubkey\* --qf "%{name}-%{version}-%{release}-%{summary}\n" | grep "signing-key@nginx.com"'
+    }
+
+    actions["update_nginx_repo"] = {
+        'command': '',# Nothing todo
+        'needs': [
+            'action:import_nginx_key',
+            'file:/etc/yum.repos.d/nginx.repo',
+        ],
+    }
+
+
+if node.os == "debian":
+    codename = "stretch"
+    if node.os_version[0] == 8:
+        codename = "jessie"
+
+    files["/etc/apt/sources.list.d/nginx-repo.list"] = {
+        'source': 'etc/apt/sources.list.d/nginx-repo.list',
+        'content_type': 'mako',
+        'context': {
+            'codename': codename,
         }
+    }
+
+    actions["import_nginx_key"] = {
+        'command': 'curl https://nginx.org/keys/nginx_signing.key | apt-key add -',
+    }
+
+    actions["update_nginx_repo"] = {
+        'command': 'apt-get update',
+        'needs': [
+            'action:import_nginx_key',
+            'file:/etc/apt/sources.list.d/nginx-repo.list',
+        ],
+    }
+
+pkg = {
+    "nginx": {
+        'needs': [
+            'action:update_nginx_repo',
+        ],
     },
     "openssl": {
     },
@@ -34,13 +87,7 @@ users = {
     'nginx': {}
 }
 
-directories = {}
-actions = {}
-symlinks = {}
-files = {}
-users = {
-    'nginx': {},
-}
+
 
 if 'nginx' in node.metadata:
     files['/etc/nginx/nginx.conf'] = {

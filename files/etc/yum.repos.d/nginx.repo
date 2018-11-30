@@ -1,0 +1,4 @@
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/${node_os}/${node_os_version}/$basearch/
+gpgcheck=1
