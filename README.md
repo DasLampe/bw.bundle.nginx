@@ -13,6 +13,7 @@ __Don't use this for production! It's still work in progress!__
   'enable_websockets': False,
     'sites': {
         'www.example.test': {
+			'default': False,
             'servernames': ['example.test', 'example.local'],
             'enabled': True,
             'ssl': True,
