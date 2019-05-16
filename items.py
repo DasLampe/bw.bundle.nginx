@@ -62,21 +62,11 @@ if node.os == "debian":
         ],
     }
 
-pkg = {
-    "nginx": {
-        'needs': [
-            'action:update_nginx_repo',
-        ],
-    },
-    "openssl": {
-    },
-}
-
 # TODO: systemv compatible
 svc_systemd = {
     "nginx": {
         'needs': [
-            'pkg:nginx',
+            'pkg_apt:nginx',
             'user:nginx',
             'file:/etc/nginx/nginx.conf',
         ],
@@ -120,10 +110,10 @@ if 'nginx' in node.metadata:
                     'cascade_skip': False,
                     'needed_by': [
                         'svc_systemd:nginx',
-                        'pkg:nginx',
+                        'pkg_apt:nginx',
                     ],
                     'needs': [
-                        'pkg:openssl'
+                        'pkg_apt:openssl'
                     ],
                 }
             else:

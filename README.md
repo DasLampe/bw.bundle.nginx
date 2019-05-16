@@ -4,7 +4,7 @@ Install nginx on Debian and configure vHost.
 __Don't use this for production! It's still work in progress!__
 
 ## Dependencies
-* pkg_wrapper (https://github.com/DasLampe/bw.item.pkg_wrapper)
+* [apt-Bundle](https://github.com/sHorst/bw.bundle.apt)
 
 
 ## Options

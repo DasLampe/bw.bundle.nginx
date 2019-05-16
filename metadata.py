@@ -2,6 +2,18 @@ global node
 global repo
 
 @metadata_processor
+def add_apt_packages(metadata):
+    if node.has_bundle("apt"):
+        metadata.setdefault('apt', {})
+        metadata['apt'].setdefault('packages', {})
+
+        metadata['apt']['packages']['nginx'] = {'installed': True, 'needs': ['action:update_nginx_repo']}
+        metadata['apt']['packages']['openssl'] = {'installed': True}
+
+    return metadata, DONE
+
+
+@metadata_processor
 def add_iptables(metadata):
     if node.has_bundle("iptables"):
         metadata += repo.libs.iptables.accept().chain('INPUT').tcp().dest_port(80)
