@@ -121,8 +121,12 @@ if 'nginx' in node.metadata:
                     ],
                 }
             else:
+                if vhost.get('letsencrypt', False):
+                    files['/etc/nginx/snippets/letsencrypt.conf'] = {
+                        'source': 'etc/nginx/snippets/letsencrypt.conf',
+                        'mode': '0644',
+                    }
                 # TODO: Implement LetsEncrypt
-                pass
 
         # Write vHost file
         if vhost.get('ssl', False):
