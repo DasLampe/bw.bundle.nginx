@@ -55,7 +55,7 @@ if node.os == "debian":
 
     actions["import_nginx_key"] = {
         'command': 'curl https://nginx.org/keys/nginx_signing.key | apt-key add -',
-        'unless': 'apt-key list | grep "nginx signing key <signing-key@nginx.com>"',
+        'unless': 'apt-key list | grep "nginx signing key <signing-key@nginx.com>" &> /dev/null',
     }
 
     actions["update_nginx_repo"] = {
