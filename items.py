@@ -47,11 +47,15 @@ if node.os == "debian":
         'content_type': 'mako',
         'context': {
             'codename': codename,
+        },
+        'triggers': {
+            'action:update_nginx_repo',
         }
     }
 
     actions["import_nginx_key"] = {
         'command': 'curl https://nginx.org/keys/nginx_signing.key | apt-key add -',
+        'unless': 'apt-key list | grep "nginx signing key <signing-key@nginx.com>"',
     }
 
     actions["update_nginx_repo"] = {
@@ -60,6 +64,7 @@ if node.os == "debian":
             'action:import_nginx_key',
             'file:/etc/apt/sources.list.d/nginx-repo.list',
         ],
+        'triggered': True,
     }
 
 # TODO: systemv compatible
