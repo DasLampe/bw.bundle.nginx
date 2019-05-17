@@ -32,8 +32,8 @@ if node.os in node.OS_FAMILY_REDHAT:
         'command': '',# Nothing todo
         'needs': [
             'action:import_nginx_key',
-            'file:/etc/yum.repos.d/nginx.repo',
         ],
+        'triggers': True,
     }
 
 
@@ -62,7 +62,6 @@ if node.os == "debian":
         'command': 'apt-get update',
         'needs': [
             'action:import_nginx_key',
-            'file:/etc/apt/sources.list.d/nginx-repo.list',
         ],
         'triggered': True,
     }
