@@ -1,11 +1,7 @@
 # Bundlewrap nginx
-Install nginx on Debian and configure vHost.
+Install nginx on Debian, Amazon Linux or CentOs and configure vHost.
 
 __Don't use this for production! It's still work in progress!__
-
-## Dependencies
-* [apt-Bundle](https://github.com/sHorst/bw.bundle.apt)
-
 
 ## Options
 ```python
