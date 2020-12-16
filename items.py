@@ -126,14 +126,17 @@ files['/etc/nginx/nginx.conf'] = {
 
 for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items():
     # Setup SSL
-    if vhost.get('ssl', False):
+    if vhost.get('ssl', {}):
+        ssl = vhost.get('ssl')
+
         directories['/etc/nginx/ssl'] = {
             'mode': '0755',
             'owner': 'root',
             'group': 'root'
         }
 
-        if vhost.get('ssl_snakeoil', False):
+        # Generate Snakeoil certificate
+        if ssl.get('snakeoil', False):
             actions['generate_sneakoil_{}'.format(vhost_name)] = {
                 'command': 'openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:4096 '
                 '-subj "{}" -keyout {} -out {}'.format(
@@ -143,35 +146,48 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 'unless': 'test -f {} && test -f {}'.format('/etc/nginx/ssl/{}.crt'.format(vhost_name),
                                                             '/etc/nginx/ssl/{}.key'.format(vhost_name)),
                 'cascade_skip': False,
-                'tags': ['nginx-config'],
+                'tags': ['nginx-config', 'nginx-ssl-config'],
                 'needs': [
                     'bundle:openssl'
                 ],
             }
-        else:
-            if vhost.get('letsencrypt', False):
-                files['/etc/nginx/snippets/letsencrypt.conf'] = {
-                    'source': 'etc/nginx/snippets/letsencrypt.conf',
-                    'mode': '0644',
-                    'tags': ['nginx-config'],
-                }
+
+        # Enable LetsEncrypt
+        if ssl.get('letsencrypt', False):
+            files['/etc/nginx/snippets/letsencrypt.conf'] = {
+                'source': 'etc/nginx/snippets/letsencrypt.conf',
+                'mode': '0644',
+                'tags': ['nginx-config', 'nginx-ssl-config'],
+            }
             # TODO: Implement LetsEncrypt
 
-    # Write vHost file
-    if vhost.get('ssl', False):
-        files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
-            'source': 'etc/nginx/sites-available/template_ssl.conf',
-            'content_type': 'mako',
-            'mode': '0644',
-            'owner': 'root',
-            'group': 'root',
-            'context': {'vhost_name': vhost_name, 'vhost': vhost},
-            'tags': ['nginx-config'],
-            'triggers': [
-                "svc_systemd:nginx:restart"
-            ],
-        }
-    else:
+        # Use static files, from data/ folder
+        if ssl.get('files', {}):
+            files['/etc/nginx/ssl/{}'.format(ssl.get('files/cert'))] = {
+                'source': ssl.get('files/cert'),
+                'owner': node.metadata.get('nginx/user'),
+                'group': node.metadata.get('nginx/group'),
+                'mode': '0640',
+                'tags': ['nginx-config', 'nginx-ssl-config']
+            }
+            files['/etc/nginx/ssl/{}'.format(ssl.get('files/key'))] = {
+                'source': ssl.get('files/key'),
+                'owner': node.metadata.get('nginx/user'),
+                'group': node.metadata.get('nginx/group'),
+                'mode': '0640',
+                'tags': ['nginx-config', 'nginx-ssl-config']
+            }
+            if not ssl.get('files/cert').split('.')[:-1] == vhost_name:
+                symlinks['/etc/nginx/ssl/{}.crt'.format(vhost_name)] = {
+                    'target': '/etc/nginx/ssl/{}'.ssl.get('files/cert'),
+                    'tags': ['nginx-config', 'nginx-ssl-config']
+                }
+            if not ssl.get('files/key').split('.')[:-1] == vhost_name:
+                symlinks['/etc/nginx/ssl/{}.key'.format(vhost_name)] = {
+                    'target': '/etc/nginx/ssl/{}'.ssl.get('files/cert'),
+                    'tags': ['nginx-config', 'nginx-ssl-config']
+                }
+
         files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
             'source': 'etc/nginx/sites-available/template.conf',
             'content_type': 'mako',
@@ -180,6 +196,19 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
             'group': 'root',
             'tags': ['nginx-config'],
             'context': {'vhost_name': vhost_name, 'vhost': vhost},
+            'triggers': [
+                "svc_systemd:nginx:restart"
+            ],
+        }
+    else:
+        files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
+            'source': 'etc/nginx/sites-available/template_ssl.conf',
+            'content_type': 'mako',
+            'mode': '0644',
+            'owner': 'root',
+            'group': 'root',
+            'context': {'vhost_name': vhost_name, 'vhost': vhost},
+            'tags': ['nginx-config'],
             'triggers': [
                 "svc_systemd:nginx:restart"
             ],
