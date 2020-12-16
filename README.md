@@ -12,18 +12,29 @@ __Don't use this for production! It's still work in progress!__
 'nginx': {
   'enable_websockets': False,
     'sites': {
-        'www.example.test': {
+        'www.example.org': {
 			'default': False,
             'additional_server_names': ['example.test', 'example.local'],
             'enabled': True,
-            'ssl': True,
-            'ssl_snakeoil': True,
-            'php': True,
+            'ssl': {
+                'snakeoil': False,
+                'letsencrypt': False,
+                'files': {
+                    'cert': 'example.org.crt',
+                    'key': 'example.org.key'
+                },
+                'session': {
+                    'timeout': '1d',
+                    'cache': 'shared:SSL:50m',
+                    'tickets': 'off',
+                },
+            },
             'upstream': {
               'backend': [
                 'server 127.0.0.1:8080',
               ],
             },
+            'root': '/var/www/www.example.org/public',
             'location': {
               '/': [
                 'root /var/www/html;'
