@@ -1,30 +1,28 @@
-global node
-global repo
+defaults = {}
 
-@metadata_processor
-def add_apt_packages(metadata):
-    if node.has_bundle("apt"):
-        metadata.setdefault('apt', {})
-        metadata['apt'].setdefault('packages', {})
-
-        metadata['apt']['packages']['nginx'] = {'installed': True, 'needs': ['action:update_nginx_repo']}
-        metadata['apt']['packages']['openssl'] = {'installed': True}
-
-    return metadata, DONE
-
-
-@metadata_processor
+@metadata_reactor
 def add_iptables(metadata):
-    if node.has_bundle("iptables"):
-        metadata += repo.libs.iptables.accept().chain('INPUT').tcp().dest_port(80)
+    if not node.has_bundle("iptables"):
+        raise DoNotRunAgain
 
+    interfaces = ['main_interface']
+    interfaces += metadata.get('nginx/additional_interfaces', [])
 
-        enableSSL = False
-        for _,config in metadata.get('nginx', {}).get('sites', {}).items():
-            if config.get('ssl', False):
-                enableSSL = True
+    enable_ssl = False
+    for _, config in metadata.get('nginx', {}).get('sites', {}).items():
+        if config.get('ssl', False):
+            enable_ssl = True
 
-        if enableSSL == True:
-            metadata += repo.libs.iptables.accept().chain('INPUT').tcp().dest_port(443)
+    iptables_rules = {}
+    for interface in interfaces:
+        iptables_rules += repo.libs.iptables.accept(). \
+            input(interface). \
+            tcp(). \
+            dest_port(80)
+        if enable_ssl:
+            iptables_rules += repo.libs.iptables.accept(). \
+                input(interface). \
+                tcp(). \
+                dest_port(443)
 
-    return metadata, DONE
+    return iptables_rules
