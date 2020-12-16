@@ -14,7 +14,7 @@ __Don't use this for production! It's still work in progress!__
     'sites': {
         'www.example.test': {
 			'default': False,
-            'servernames': ['example.test', 'example.local'],
+            'additional_server_names': ['example.test', 'example.local'],
             'enabled': True,
             'ssl': True,
             'ssl_snakeoil': True,

@@ -191,7 +191,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
             'group': 'root',
             'owner': 'root',
             'target': '../sites-available/{}.conf'.format(vhost_name),
-            'tag': ['nginx-config'],
+            'tags': ['nginx-config'],
             'triggers': [
                 'svc_systemd:nginx:restart',
             ],
