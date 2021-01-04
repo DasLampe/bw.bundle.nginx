@@ -162,30 +162,44 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
             # TODO: Implement LetsEncrypt
 
         # Use static files, from data/ folder
-        if ssl.get('files', {}):
-            files['/etc/nginx/ssl/{}'.format(ssl.get('files/cert'))] = {
-                'source': ssl.get('files/cert'),
-                'owner': node.metadata.get('nginx/user'),
-                'group': node.metadata.get('nginx/group'),
+        ssl_files = ssl.get('files', {})
+        if ssl_files:
+            files['/etc/nginx/ssl/{}'.format(ssl_files.get('cert'))] = {
+                'source': ssl_files.get('cert'),
+                'owner': node.metadata.get('nginx', {}).get('user'),
+                'group': node.metadata.get('nginx', {}).get('group'),
                 'mode': '0640',
-                'tags': ['nginx-config', 'nginx-ssl-config']
+                'tags': [
+                    'nginx-config',
+                    'nginx-ssl-config'
+                ]
             }
-            files['/etc/nginx/ssl/{}'.format(ssl.get('files/key'))] = {
-                'source': ssl.get('files/key'),
-                'owner': node.metadata.get('nginx/user'),
-                'group': node.metadata.get('nginx/group'),
+            files['/etc/nginx/ssl/{}'.format(ssl_files.get('key'))] = {
+                'source': ssl_files.get('key'),
+                'owner': node.metadata.get('nginx', {}).get('user'),
+                'group': node.metadata.get('nginx', {}).get('group'),
                 'mode': '0640',
-                'tags': ['nginx-config', 'nginx-ssl-config']
+                'tags': [
+                    'nginx-config',
+                    'nginx-ssl-config'
+                ]
             }
-            if not ssl.get('files/cert').split('.')[:-1] == vhost_name:
+
+            if not ssl_files.get('cert').split('.')[:-1] == vhost_name:
                 symlinks['/etc/nginx/ssl/{}.crt'.format(vhost_name)] = {
-                    'target': '/etc/nginx/ssl/{}'.ssl.get('files/cert'),
-                    'tags': ['nginx-config', 'nginx-ssl-config']
+                    'target': '/etc/nginx/ssl/{}'.format(ssl_files.get('cert')),
+                    'tags': [
+                        'nginx-config',
+                        'nginx-ssl-config'
+                    ]
                 }
-            if not ssl.get('files/key').split('.')[:-1] == vhost_name:
+            if not ssl_files.get('key').split('.')[:-1] == vhost_name:
                 symlinks['/etc/nginx/ssl/{}.key'.format(vhost_name)] = {
-                    'target': '/etc/nginx/ssl/{}'.ssl.get('files/cert'),
-                    'tags': ['nginx-config', 'nginx-ssl-config']
+                    'target': '/etc/nginx/ssl/{}'.format(ssl_files.get('key')),
+                    'tags': [
+                        'nginx-config',
+                        'nginx-ssl-config'
+                    ]
                 }
 
         files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
