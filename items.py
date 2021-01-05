@@ -103,6 +103,8 @@ if node.os in node.OS_FAMILY_DEBIAN:
 
 svc_systemd = {
     "nginx": {
+        'running': True,
+        'enabled': True,
         'needs': [
             'tag:nginx-install',
             'user:nginx',
