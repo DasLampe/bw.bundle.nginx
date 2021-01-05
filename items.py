@@ -186,7 +186,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 ]
             }
 
-            if not ssl_files.get('cert').split('.')[:-1] == vhost_name:
+            if not '.'.join(ssl_files.get('cert').split('.')[:-1]) == vhost_name:
                 symlinks['/etc/nginx/ssl/{}.crt'.format(vhost_name)] = {
                     'target': '/etc/nginx/ssl/{}'.format(ssl_files.get('cert')),
                     'tags': [
@@ -194,7 +194,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                         'nginx-ssl-config'
                     ]
                 }
-            if not ssl_files.get('key').split('.')[:-1] == vhost_name:
+            if not '.'.join(ssl_files.get('key').split('.')[:-1]) == vhost_name:
                 symlinks['/etc/nginx/ssl/{}.key'.format(vhost_name)] = {
                     'target': '/etc/nginx/ssl/{}'.format(ssl_files.get('key')),
                     'tags': [
