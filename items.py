@@ -223,7 +223,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 }
 
         files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
-            'source': 'etc/nginx/sites-available/template.conf',
+            'source': 'etc/nginx/sites-available/template_ssl.conf',
             'content_type': 'mako',
             'mode': '0644',
             'owner': 'root',
@@ -236,7 +236,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
         }
     else:
         files['/etc/nginx/sites-available/{}.conf'.format(vhost_name)] = {
-            'source': 'etc/nginx/sites-available/template_ssl.conf',
+            'source': 'etc/nginx/sites-available/template.conf',
             'content_type': 'mako',
             'mode': '0644',
             'owner': 'root',
