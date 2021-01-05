@@ -31,7 +31,7 @@ if node.os in node.OS_FAMILY_REDHAT:
     }
 
     actions["import_nginx_key"] = {
-        'command': 'rpm --import https://nginx.org/keys/nginx_signing.key',
+        'command': 'rpm --import  https://nginx.org/packages/keys/nginx_signing.key',
         'unless': 'rpm -qa gpg-pubkey\* --qf "%{name}-%{version}-%{release}-%{summary}\n" | grep "signing-key@nginx.com"',
         'tags': ['.pre']
     }
@@ -77,7 +77,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
     }
 
     actions["import_nginx_key"] = {
-        'command': 'curl https://nginx.org/keys/nginx_signing.key | apt-key add -',
+        'command': 'curl  https://nginx.org/packages/keys/nginx_signing.key | apt-key add -',
         'unless': 'apt-key list | grep "nginx signing key <signing-key@nginx.com>" &> /dev/null',
         'tags': ['.pre'],
     }
