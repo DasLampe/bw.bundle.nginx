@@ -68,6 +68,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
         'content_type': 'mako',
         'context': {
             'codename': release_names.get(node.os, 'debian').get(node.os_version[0], '11'),
+            'distro': node.os,
         },
         'triggers': {
             'action:update_nginx_repo',
