@@ -126,6 +126,23 @@ files['/etc/nginx/nginx.conf'] = {
     },
     'mode': '0644',
 }
+files['/etc/nginx/snippets/ssl.conf'] = {
+    'source': 'etc/nginx/snippets/ssl.conf',
+    'content_type': 'mako',
+    'context': {
+        'nginx': node.metadata.get('nginx', {}),
+    },
+    'mode': '0644',
+}
+
+files['/etc/nginx/snippets/letsencrypt.conf'] = {
+    'source': 'etc/nginx/snippets/letsencrypt.conf',
+    'content_type': 'mako',
+    'context': {
+        'nginx': node.metadata.get('nginx', {}),
+    },
+    'mode': '0644',
+}
 
 for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items():
     # Setup SSL
