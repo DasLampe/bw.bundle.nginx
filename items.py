@@ -130,7 +130,7 @@ files['/etc/nginx/snippets/ssl.conf'] = {
     'source': 'etc/nginx/snippets/ssl.conf',
     'content_type': 'mako',
     'context': {
-        'nginx': node.metadata.get('nginx', {}),
+        'config': node.metadata.get('nginx', {}),
     },
     'mode': '0644',
 }
