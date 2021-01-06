@@ -13,6 +13,7 @@ __Don't use this for production! It's still work in progress!__
             'additional_server_names': ['example.test', 'example.local'],
             'enabled': True,
             'ssl': {
+                'redirect_insecure': True,
                 'snakeoil': False,
                 'letsencrypt': False,
                 'files': {
