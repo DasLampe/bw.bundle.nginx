@@ -269,7 +269,8 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
         }
 
     # Create vHost dir
-    directories["/var/www/{}/public_html".format(vhost_name)] = {
+    root_dir = vhost.get('root', '/var/www/{}/public_html'.format(vhost_name))
+    directories[root_dir] = {
         "mode": "755",
-        "unless": "test -d /var/www/{}/public_html".format(vhost_name),
+        "unless": "test -d {}".format(root_dir),
     }
