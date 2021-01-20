@@ -21,8 +21,8 @@ __Don't use this for production! It's still work in progress!__
             'default': False,
             'additional_server_names': ['example.test', 'example.local'],
             'enabled': True,
-            'http2': True,
             'ssl': {
+                'http2': True,
                 'redirect_insecure': True,
                 'snakeoil': False,
                 'letsencrypt': False,
