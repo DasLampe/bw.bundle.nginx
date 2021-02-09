@@ -18,9 +18,10 @@ __Don't use this for production! It's still work in progress!__
     },
     'sites': {
         'www.example.org': {
+            'enabled': True,
             'default': False,
             'additional_server_names': ['example.test', 'example.local'],
-            'enabled': True,
+            'redirect_to_main_server_name': True,
             'ssl': {
                 'http2': True,
                 'redirect_insecure': True,
