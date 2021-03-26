@@ -77,8 +77,8 @@ if node.os in node.OS_FAMILY_DEBIAN:
     }
 
     actions["import_nginx_key"] = {
-        'command': 'curl  https://nginx.org/packages/keys/nginx_signing.key | apt-key add -',
-        'unless': 'apt-key list | grep "nginx signing key <signing-key@nginx.com>" &> /dev/null',
+        'command': 'curl https://nginx.org/packages/keys/nginx_signing.key | apt-key add -',
+        'unless': 'apt-key list | grep -w "573B FD6B 3D8F BC64 1079  A6AB ABF5 BD82 7BD9 BF62" > /dev/null',
         'tags': ['.pre'],
     }
 
