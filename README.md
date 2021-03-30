@@ -22,6 +22,9 @@ __Don't use this for production! It's still work in progress!__
             'default': False,
             'additional_server_names': ['example.test', 'example.local'],
             'redirect_to_main_server_name': True,
+            'additional_config': [
+                'error 503 /error/503.json;',
+            ],
             'ssl': {
                 'http2': True,
                 'redirect_insecure': True,

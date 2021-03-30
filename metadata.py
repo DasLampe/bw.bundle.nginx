@@ -1,5 +1,6 @@
 defaults = {}
 
+
 @metadata_reactor
 def add_iptables(metadata):
     if not node.has_bundle("iptables"):
@@ -26,3 +27,26 @@ def add_iptables(metadata):
                 dest_port(443)
 
     return iptables_rules
+
+
+# See https://github.com/DasLampe/bw.bundle.nginx/issues/3
+@metadata_reactor
+def process_additional_config(metadata):
+    return_dict = {
+        'nginx': {
+            'sites': {
+            }
+        }
+    }
+    for name, config in metadata.get('nginx/sites').items():
+        additional_config = config.get('additional_config', [])
+        if isinstance(additional_config, str):
+            return_dict['nginx']['sites'][name] = {
+                'processed_additional_config': [additional_config.strip(), ],
+            }
+        else:
+            return_dict['nginx']['sites'][name] = {
+                'processed_additional_config': additional_config,
+            }
+
+    return return_dict
