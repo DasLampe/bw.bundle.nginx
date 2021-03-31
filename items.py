@@ -217,7 +217,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 ]
             }
             files['/etc/nginx/ssl/{}'.format(ssl_files.get('key'))] = {
-                'source': ssl_files.get('key'),
+                'content': repo.vault.decrypt_file(f"nginx/files/{ssl_files.get('key')}"),
                 'owner': node.metadata.get('nginx', {}).get('user'),
                 'group': node.metadata.get('nginx', {}).get('group'),
                 'mode': '0640',
