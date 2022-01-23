@@ -76,16 +76,18 @@ if node.os in node.OS_FAMILY_DEBIAN:
         'tags': ['.pre'],
     }
 
-    actions["import_nginx_key"] = {
-        'command': 'curl https://nginx.org/packages/keys/nginx_signing.key | apt-key add -',
-        'unless': 'apt-key list | grep -w "573B FD6B 3D8F BC64 1079  A6AB ABF5 BD82 7BD9 BF62" > /dev/null',
-        'tags': ['.pre'],
+    files['/etc/apt/trusted.gpg.d/nginx_signing.gpg'] = {
+        'source': 'https://nginx.org/keys/nginx_signing.key',
+        'content_type': 'download',
+        'tags': [
+            '.pre',
+        ],
     }
 
     actions["update_nginx_repo"] = {
         'command': 'apt-get update',
         'needs': [
-            'action:import_nginx_key',
+            'file:/etc/apt/trusted.gpg.d/nginx_signing.gpg',
         ],
         'triggered': True,
         'tags': ['.pre'],
