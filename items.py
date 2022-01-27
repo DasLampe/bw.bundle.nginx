@@ -63,8 +63,8 @@ if node.os in node.OS_FAMILY_DEBIAN:
         }
     }
 
-    files["/etc/apt/sources.list.d/nginx-repo.list"] = {
-        'source': 'etc/apt/sources.list.d/nginx-repo.list',
+    files["/etc/apt/sources.list.d/nginx.list"] = {
+        'source': 'etc/apt/sources.list.d/nginx.list',
         'content_type': 'mako',
         'context': {
             'codename': release_names.get(node.os, 'debian').get(node.os_version[0], '11'),
