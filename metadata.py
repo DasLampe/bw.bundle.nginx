@@ -50,3 +50,16 @@ def process_additional_config(metadata):
             }
 
     return return_dict
+
+@metadata_reactor
+def add_apt_packages(metadata):
+    if node.has_bundle("apt"):
+        return {
+            'apt': {
+                'packages': {
+                    'gpg': {
+                        'installed': True,
+                    },
+                },
+            },
+        }

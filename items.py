@@ -76,18 +76,21 @@ if node.os in node.OS_FAMILY_DEBIAN:
         'tags': ['.pre'],
     }
 
-    files['/etc/apt/trusted.gpg.d/nginx_signing.gpg'] = {
-        'source': 'https://nginx.org/keys/nginx_signing.key',
-        'content_type': 'download',
+    actions['getSignKey'] = {
+        'command': 'curl https://nginx.org/keys/nginx_signing.key | '
+                   'gpg --dearmor > /etc/apt/trusted.gpg.d/nginx_signing.gpg',
         'tags': [
             '.pre',
         ],
+        'needs': [
+            'pkg_apt:gpg',
+        ]
     }
 
     actions["update_nginx_repo"] = {
         'command': 'apt-get update',
         'needs': [
-            'file:/etc/apt/trusted.gpg.d/nginx_signing.gpg',
+            'action:getSignKey',
         ],
         'triggered': True,
         'tags': ['.pre'],
