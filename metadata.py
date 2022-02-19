@@ -38,7 +38,7 @@ def process_additional_config(metadata):
             }
         }
     }
-    for name, config in metadata.get('nginx/sites').items():
+    for name, config in metadata.get('nginx/sites', {}).items():
         additional_config = config.get('additional_config', [])
         if isinstance(additional_config, str):
             return_dict['nginx']['sites'][name] = {
