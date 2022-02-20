@@ -173,6 +173,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 'cascade_skip': False,
                 'tags': ['nginx-config', 'nginx-ssl-config'],
                 'needs': [
+                    'directory:/etc/nginx/ssl',
                     'bundle:openssl'
                 ],
             }
