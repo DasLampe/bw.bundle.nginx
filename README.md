@@ -6,6 +6,8 @@ __Don't use this for production! It's still work in progress!__
 ## Options
 ```python
 'nginx': {
+	'user': 'nginx',
+	'compress': True,
     'enable_websockets': False,
     'resolver': ['1.1.1.1', '1.0.0.1', '[2606:4700:4700::1111]', '[2606:4700:4700::1001]'],
     'ssl': {
