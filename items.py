@@ -84,7 +84,8 @@ if node.os in node.OS_FAMILY_DEBIAN:
         ],
         'needs': [
             'pkg_apt:gpg',
-        ]
+        ],
+        'unless': 'test -f /etc/apt/trusted.gpg.d/nginx_signing.gpg',
     }
 
     actions["update_nginx_repo"] = {
