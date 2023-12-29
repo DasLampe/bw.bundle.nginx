@@ -57,6 +57,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
             12: 'bookworm',
         },
         'ubuntu': {
+            22: 'jammy',
             20: 'focal',
             18: 'bionic',
             16: 'xenial',
