@@ -1,5 +1,4 @@
-from bundlewrap.exceptions import BundleError
-from os.path import dirname
+import os
 
 # noinspection PyGlobalUndefined
 global node
@@ -152,6 +151,14 @@ files['/etc/nginx/snippets/letsencrypt.conf'] = {
 }
 
 for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items():
+    for include in vhost.get('includes', []):
+        bundles_data_dir = os.path.join(node.repo.data_dir, 'nginx', 'includes')
+        if os.path.exists(bundles_data_dir) and os.path.basename(include) in os.listdir(bundles_data_dir):
+            files[include] = {
+                'source': os.path.join(bundles_data_dir, os.path.basename(include)),
+                'mode': '0644',
+            }
+
     # Setup SSL
     if vhost.get('ssl', {}):
         ssl = vhost.get('ssl')

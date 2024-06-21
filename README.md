@@ -1,7 +1,11 @@
 # Bundlewrap nginx
-Install nginx on Debian, Amazon Linux or CentOs and configure vHost.
+Install nginx on Debian and configure vHost.
 
-__Don't use this for production! It's still work in progress!__
+## Use includes
+You can define includes via `default_includes` or `includes` list.
+You can either specify a file on your server or you can put the file into `data/nginx/includes/[basename]`, the file will be placed in the defined filepath.
+
+`default_includes` will be added to each site. If you want to ignore `default_includes` in one site you could use `'includes': bundlewrap.metadata.atomic([])`
 
 ## Options
 ```python
@@ -18,6 +22,9 @@ __Don't use this for production! It's still work in progress!__
         'stapling': 'on',
         'staping_verify': 'on',
     },
+    'default_includes': [
+        '/etc/nginx/snippets/caching.conf',
+    ],
     'sites': {
         'www.example.org': {
             'enabled': True,
@@ -27,6 +34,9 @@ __Don't use this for production! It's still work in progress!__
             'additional_config': [
                 'error 503 /error/503.json;',
             ],
+            'includes': [
+                '/etc/nginx/snippets/piwik.conf',
+            ]
             'ssl': {
                 'http2': True,
                 'redirect_insecure': True,

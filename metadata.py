@@ -54,6 +54,24 @@ def process_additional_config(metadata):
     return return_dict
 
 @metadata_reactor
+def add_default_includes_vhosts(metadata):
+    return_dict = {
+        'nginx': {
+            'sites': {}
+        }
+    }
+
+    default_includes = metadata.get('nginx/default_includes', [])
+    for name, config in metadata.get('nginx/sites', {}).items():
+        includes = []
+        [includes.append(x) for x in default_includes + config.get('includes', []) if x not in includes]
+        return_dict['nginx']['sites'][name] = {
+            'includes': default_includes,
+        }
+
+    return return_dict
+
+@metadata_reactor
 def add_apt_packages(metadata):
     if node.has_bundle("apt"):
         return {
