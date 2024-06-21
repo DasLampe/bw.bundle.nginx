@@ -38,16 +38,18 @@ def process_additional_config(metadata):
             }
         }
     }
+
+    process_additional_config = []
     for name, config in metadata.get('nginx/sites', {}).items():
         additional_config = config.get('additional_config', [])
         if isinstance(additional_config, str):
-            return_dict['nginx']['sites'][name] = {
-                'processed_additional_config': [additional_config.strip(), ],
-            }
+            process_additional_config = [additional_config.strip(), ],
         else:
-            return_dict['nginx']['sites'][name] = {
-                'processed_additional_config': additional_config,
-            }
+            process_additional_config = additional_config
+
+        return_dict['nginx']['sites'][name] = {
+            'processed_additional_config': [entry + ';' if not entry.endswith(';') else entry for entry in process_additional_config],
+        }
 
     return return_dict
 
