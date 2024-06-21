@@ -1,4 +1,13 @@
-defaults = {}
+defaults = {
+    'nginx': {
+        'lego_renew_hook': '''
+            install -u nginx -g nginx -m 0640 ${LEGO_CERT_KEY_PATH} /etc/nginx/ssl/
+            install -u nginx -g nginx -m 0640 ${LEGO_CERT_PATH} /etc/nginx/ssl/
+
+            systemctl restart nginx
+        '''
+    }
+}
 
 
 @metadata_reactor
@@ -82,4 +91,13 @@ def add_apt_packages(metadata):
                     },
                 },
             },
+        }
+
+@metadata_reactor
+def add_lego_renew_hook(metadata):
+    if node.has_bundle("lego"):
+        return {
+            'lego': {
+                'renew_hooks': [metadata.get('nginx/lego_renew_hook', ""), ],
+            }
         }

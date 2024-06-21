@@ -184,37 +184,6 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 ],
             }
 
-        # Enable LetsEncrypt
-        if ssl.get('letsencrypt', False):
-            if node.has_bundle('lego'):
-                lego_path = node.metadata.get('lego').get('path')
-                symlinks[f'/etc/nginx/ssl/{vhost_name}.crt'] = {
-                    'target': f'{lego_path}/certificates/{vhost_name}.crt',
-                    'tags': [
-                        'nginx-config',
-                        'nginx-ssl-config'
-                    ],
-                    'needs': [
-                        'bundle:lego',
-                    ],
-                    'triggers': [
-                        'svc_systemd:nginx:restart'
-                    ],
-                }
-                symlinks[f'/etc/nginx/ssl/{vhost_name}.key'] = {
-                    'target': f'{lego_path}/certificates/{vhost_name}.key',
-                    'tags': [
-                        'nginx-config',
-                        'nginx-ssl-config'
-                    ],
-                    'needs': [
-                        'bundle:lego',
-                    ],
-                    'triggers': [
-                        'svc_systemd:nginx:restart'
-                    ],
-                }
-
         # Use static files, from data/ folder
         ssl_files = ssl.get('files', {})
         if ssl_files:
