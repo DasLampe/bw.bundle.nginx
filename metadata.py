@@ -95,9 +95,12 @@ def add_apt_packages(metadata):
 
 @metadata_reactor
 def add_lego_renew_hook(metadata):
-    if node.has_bundle("lego"):
-        return {
-            'lego': {
-                'renew_hooks': [metadata.get('nginx/lego_renew_hook', ""), ],
-            }
+    if not node.has_bundle("lego"):
+        raise DoNotRunAgain
+
+    return {
+        'lego': {
+            'renew_hooks': [metadata.get('nginx/lego_renew_hook', ""), ],
         }
+    }
+
