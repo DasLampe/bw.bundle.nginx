@@ -1,5 +1,7 @@
 import os
 
+import bcrypt
+
 # noinspection PyGlobalUndefined
 global node
 
@@ -287,3 +289,19 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
         "mode": '755',
         "unless": f'test -d {root_dir}',
     }
+
+    if vhost.get('htpasswd', {}):
+        htpasswd_content = []
+        for htpasswd_user in vhost.get('htpasswd').get('users', []):
+            username   = htpasswd_user.get('username')
+            if not htpasswd_user.get('password_hash', False):
+                password        = htpasswd_user.get('password',
+                                                    repo.vault.password_for(f'nginx_htpasswd_{username}_{vhost_name}').value)
+                passwordHash    = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
+            else:
+                passwordHash = htpasswd_user.get('password_hash')
+            htpasswd_content += [f'{username}:{passwordHash}']
+
+        files[vhost.get('htpasswd').get('path', f'/etc/nginx/htpasswd_{vhost_name}')] = {
+            'content': "\n".join(htpasswd_content),
+        }
