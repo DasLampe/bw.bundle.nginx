@@ -295,12 +295,14 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
         for htpasswd_user in vhost.get('htpasswd').get('users', []):
             username   = htpasswd_user.get('username')
             if not htpasswd_user.get('password_hash', False):
-                password        = htpasswd_user.get('password',
-                                                    repo.vault.password_for(f'nginx_htpasswd_{username}_{vhost_name}').value)
-                passwordHash    = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
+                if htpasswd_user.get('password', False):
+                    password = repo.vault.decrypt(repo.vault.encrypt(htpasswd_user.get('password')))
+                else:
+                    password = repo.vault.password_for(f'nginx_htpasswd_{username}_{vhost_name}')
+                htpasswd_content   += [password.as_htpasswd_entry(username).value]
             else:
                 passwordHash = htpasswd_user.get('password_hash')
-            htpasswd_content += [f'{username}:{passwordHash}']
+                htpasswd_content += [f'{username}:{passwordHash}']
 
         files[vhost.get('htpasswd').get('path', f'/etc/nginx/htpasswd_{vhost_name}')] = {
             'content': "\n".join(htpasswd_content),
