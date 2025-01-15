@@ -33,7 +33,7 @@ if node.os in node.OS_FAMILY_REDHAT:
 
     actions["import_nginx_key"] = {
         'command': 'rpm --import  https://nginx.org/packages/keys/nginx_signing.key',
-        'unless': 'rpm -qa gpg-pubkey\* --qf "%{name}-%{version}-%{release}-%{summary}\n" | grep "signing-key@nginx.com"',
+        'unless': r'rpm -qa gpg-pubkey\* --qf "%{name}-%{version}-%{release}-%{summary}\n" | grep "signing-key@nginx.com"',
         'tags': ['.pre']
     }
 
@@ -177,7 +177,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 'command': 'openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:4096 '
                            f'-subj "/C=DE/ST=NRW/L=Cologne/O=DieSchoensteStadtDeutschlands/CN={vhost_name}" '
                            f'-keyout /etc/nginx/ssl/{vhost_name}.key -out /etc/nginx/ssl/{vhost_name}.crt',
-                'unless': 'test -f /etc/nginx/ssl/{vhost_name}.crt && test -f /etc/nginx/ssl/{vhost_name}.key',
+                'unless': f'test -f /etc/nginx/ssl/{vhost_name}.crt && test -f /etc/nginx/ssl/{vhost_name}.key',
                 'cascade_skip': False,
                 'tags': ['nginx-config', 'nginx-ssl-config'],
                 'needs': [
