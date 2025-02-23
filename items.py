@@ -1,5 +1,4 @@
 import os
-
 import bcrypt
 
 # noinspection PyGlobalUndefined
@@ -267,6 +266,9 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
             'target': f'../sites-available/{vhost_name}.conf',
             'tags': [
                 'nginx-config'
+            ],
+            'needs': [
+                f'file:/etc/nginx/sites-available/{vhost_name}.conf',
             ],
             'triggers': [
                 'svc_systemd:nginx:restart',
