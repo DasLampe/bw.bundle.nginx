@@ -238,7 +238,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
                 'vhost': vhost,
             },
             'triggers': [
-                "svc_systemd:nginx:restart",
+                'svc_systemd:nginx:restart',
             ],
         }
     else:
@@ -254,7 +254,7 @@ for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items()
             },
             'tags': ['nginx-config'],
             'triggers': [
-                "svc_systemd:nginx:restart"
+                'svc_systemd:nginx:restart',
             ],
         }
 
