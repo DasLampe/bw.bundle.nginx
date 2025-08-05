@@ -85,6 +85,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
         ],
         'needs': [
             'pkg_apt:gpg',
+            'pkg_apt:curl',
         ],
         'unless': 'test -f /etc/apt/trusted.gpg.d/nginx_signing.gpg',
     }
