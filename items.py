@@ -55,6 +55,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
             10: 'buster',
             11: 'bullseye',
             12: 'bookworm',
+            13: 'trixie',
         },
         'ubuntu': {
             22: 'jammy',
@@ -68,7 +69,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
         'source': 'etc/apt/sources.list.d/nginx.list',
         'content_type': 'mako',
         'context': {
-            'codename': release_names.get(node.os, 'debian').get(node.os_version[0], '11'),
+            'codename': release_names.get(node.os, 'debian').get(node.os_version[0], '13'),
             'distro': node.os,
         },
         'triggers': {
@@ -79,7 +80,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
 
     actions['getSignKey'] = {
         'command': 'curl https://nginx.org/keys/nginx_signing.key | '
-                   'gpg --dearmor > /etc/apt/trusted.gpg.d/nginx_signing.gpg',
+                   'gpg --dearmor > /usr/share/keyrings/nginx_signing.gpg',
         'tags': [
             '.pre',
         ],
@@ -87,7 +88,7 @@ if node.os in node.OS_FAMILY_DEBIAN:
             'pkg_apt:gpg',
             'pkg_apt:curl',
         ],
-        'unless': 'test -f /etc/apt/trusted.gpg.d/nginx_signing.gpg',
+        'unless': 'test -f /usr/share/keyrings/nginx_signing.gpg',
     }
 
     actions["update_nginx_repo"] = {

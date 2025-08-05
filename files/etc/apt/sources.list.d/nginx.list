@@ -1,2 +1,1 @@
-deb http://nginx.org/packages/${distro}/ ${codename} nginx
-deb-src http://nginx.org/packages/${distro}/ ${codename} nginx
+deb [signed-by=/usr/share/keyrings/nginx_signing.gpg] http://nginx.org/packages/${distro}/ ${codename} nginx
