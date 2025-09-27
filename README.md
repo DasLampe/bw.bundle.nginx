@@ -10,6 +10,7 @@ You can either specify a file on your server or you can put the file into `data/
 ## Options
 ```python
 'nginx': {
+	'bw_managed': False,
 	'user': 'nginx',
 	'compress': True,
     'enable_websockets': False,

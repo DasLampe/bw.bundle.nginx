@@ -1,5 +1,5 @@
 import os
-import bcrypt
+import pathlib
 
 # noinspection PyGlobalUndefined
 global node
@@ -152,6 +152,20 @@ files['/etc/nginx/snippets/letsencrypt.conf'] = {
     },
     'mode': '0644',
 }
+
+if node.metadata.get('nginx', {}).get('bw_managed', False):
+    def remove_unmanage_sites(path):
+        sites = node.run(f'ls {path}').stdout.decode('utf-8').split('\n')
+        for site in sites:
+            if site != "" and pathlib.Path(site).stem not in node.metadata.get('nginx', {}).get('sites', {}).keys():
+                files[f'{path}/{site}'] = {
+                    'delete': True,
+                    'triggers': {
+                        'systemd_svc:nginx:restart',
+                    }
+                }
+    remove_unmanage_sites('/etc/nginx/sites-enabled')
+    remove_unmanage_sites('/etc/nginx/sites-available')
 
 for vhost_name, vhost in node.metadata.get('nginx', {}).get('sites', {}).items():
     for include in vhost.get('includes', []):
