@@ -161,7 +161,7 @@ if node.metadata.get('nginx', {}).get('bw_managed', False):
                 files[f'{path}/{site}'] = {
                     'delete': True,
                     'triggers': {
-                        'systemd_svc:nginx:restart',
+                        'svc_systemd:nginx:restart',
                     }
                 }
     remove_unmanage_sites('/etc/nginx/sites-enabled')
